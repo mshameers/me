@@ -1,0 +1,72 @@
+{% extends "main.html" %}
+{% block head %}
+
+{% endblock %}
+{% block body %}
+
+
+<div class="column five">
+	<section>
+		<header>
+			<div class="keep-left"><a href="{{ url_for('allPosts', page=1) }}"><h1>My blogs</h1>
+           </a><h2></h2></div>
+        </header>
+
+
+		<section class="accordian">
+			{% for post in posts %}
+				<div class='category2'>
+					<input id="{{ post.slug }}" name="ac-1" type="radio">
+					<label for="{{ post.slug }}">
+						<h4>{{ post.title }}</h4>
+						<hr />
+						{% if session.logged_in %}
+							<a class="keep-right" href="{{ url_for('deletePost', id=post.id) }}">delete</a>
+						{% endif %}
+						{% for tag in post.tags %}
+							<a class="tag" href="{{ url_for('showTag', name=tag.name) }}">#{{tag.name}}</a>
+						{% endfor %}
+						<time  class="keep-right" datetime="2012-04-05T10:30:21+00:00" pubdate>
+							<small>{{ post.published|timesince }} ago</small>
+						</time>
+					</label>
+					<article class="accordian_medium">
+						<a href="{{ url_for('detail', slug=post.slug) }}"><p>{{ ' '.join(post.body.split(' ')[:30]) | markdown }} </p><span class="keep-right">...click to read more</span></a>
+					</article>
+				</div>
+				<br />
+			{% else %}
+				<p>No posts yet.</p>
+			{% endfor %}
+		</section>
+</div>
+
+<div class="column five last">
+	<section class="status">
+        <header>
+           <div class="keep-right"><a href="{{ url_for('allStatus', page=1) }}"><h1>My status</h1>
+           </a><h2></h2></div>
+        </header>
+        {% for s in status %}
+
+	        <label class="category1" for="{{ s.slug }}">
+				<h4>{{ s.body }}</h4>
+				<hr />
+				{% if session.logged_in %}
+					<a class="keep-right" href="{{ url_for('deletePost', id=s.id) }}">delete</a>
+				{% endif %}
+				{% for tag in s.tags %}
+					<a class='tag' href="{{ url_for('showTag', name=tag.name) }}">#{{tag.name}}</a>
+				{% endfor %}
+				<time  class="keep-right" datetime="2012-04-05T10:30:21+00:00" pubdate>
+					<small>{{ s.published|timesince }} ago</small>
+				</time>
+			</label>
+			<br />
+		{% else %}
+			<p>No Status yet.</p>
+		{% endfor %}        
+        <!-- <div class="followme">Follow me <span style="color: #ff2a2a"> @mshameers </span></div> -->
+    </section>
+</div>
+{% endblock %}

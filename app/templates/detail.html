@@ -1,0 +1,91 @@
+{% extends "main.html" %}
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/timeline.css') }}">
+{% endblock %}
+{% block body %}
+
+	<div class="column ten push-one center">
+		
+		<h1>{{ post.title }}</h1>
+		<hr />
+
+		<div  class="keep-left">	
+			{% for tag in post.tags %}
+				<a  class="tag" href="{{ url_for('showTag', name=tag.name) }}">#{{tag.name}}</a>
+			{% endfor %} 
+		</div>
+
+		<div class="keep-right"> 
+				Posted on {{ post.published|friendlytime }}
+		</div>
+		
+		<p>{{ post.body|markdown|safe }}</p>
+
+
+
+		<div id="forms" class="row row-forms">
+			<div class="row-content">
+				<h1>Add Comment</h1>
+				<div class="row-content">
+					<p></p>
+					<form method="POST" action="">
+						<p>
+							<input type="text" id="nameinp" placeholder="Enter Name">
+							<p><textarea  id="commentinp" placeholder="Add your Comment"></textarea></p>
+						</p>
+						<p>
+							<input type="button" value="Submit" onclick="addComment(); return false"> 
+							<input type="reset" value="Reset">
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="cllumn ten push-one">
+		<ul class='timeline'>
+			<li class="year"></li>
+		    {% for comment in post.comments %}
+		        <li class='event category2'>
+			        <p>{{ comment.body }}</p>
+			        <hr />
+			        {% if session.logged_in %}
+			          <a id="del" href="{{ url_for('deleteComment', id=comment.id) }}">delete</a>
+			        {% endif %}
+			        by <i>{{ comment.name }}</i> on 
+			        <small> {{ comment.posted|friendlytime }}</small>
+		        </li>
+		    {% else %}
+		      <p>No Comments yet.</p>
+		    {% endfor %}
+		</ul>
+
+		<div id="comment"></div>
+
+	</div>
+
+{% endblock %}
+
+{% block script %}
+	<script>
+		function addComment(url, data, callback){
+			var JsonObject = {};
+			var http = new XMLHttpRequest();
+			var JsonObject = {'name': document.getElementById('nameinp').value,
+						'content': document.getElementById('commentinp').value,
+					 	'post_id':{{post.id}}}
+			http.open("POST", "/api/comments", true);
+			http.setRequestHeader("Content-type", "application/json");
+
+			http.onreadystatechange = function () {
+				if (http.readyState == 4 && http.status == 201) {
+					console.log(http)
+				    var response = JSON.parse(http.response);
+				    document.getElementById("comment").innerHTML = response['message'];
+				 }
+			}
+			console.log(data)
+			http.send(JSON.stringify(JsonObject));
+		}
+	</script>
+{% endblock %}

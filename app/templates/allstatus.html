@@ -1,0 +1,41 @@
+{% extends "main.html" %}
+
+{% block head %}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/timeline.css') }}">
+{% endblock %}
+
+{% block body %}
+
+  <ul class='timeline'>
+    <li class="year">2013</li>
+    {% for s in pagination.items %}
+        <li class='event category3'>
+        <p>{{ s.body }}</p>
+        <hr />
+
+        {% for tag in s.tags %}
+          <a class="keep-left tag" href="{{ url_for('showTag', name=tag.name) }}">#{{tag.name}}</a>
+        {% endfor %}
+        <small class="keep-right">{{ s.published|friendlytime }}</small>
+        {% if session.logged_in %}
+          <a id="del" href="{{ url_for('deletePost', id=s.id) }}">delete</a>
+        {% endif %}
+        </li>
+            <!-- <li class='event category1' href="#">
+              Timeline.css is <b>dynamic</b>, <b>responsive</b> and optimized to <b>demonstrate events</b> in your life in a <b>simple and clear</b> way
+            </li> -->
+    {% else %}
+      <p>No Status yet.</p>
+    {% endfor %}
+  </ul>
+
+  <section id="pagination">
+    {% if pagination.has_prev %}
+      <a id="pagination-prev" href="{{ url_for('blog', page=pagination.prev_num) }}">Previous</a>
+    {% endif %}
+    {% if pagination.has_next %}
+      <a id="pagination-next" href="{{ url_for('blog', page=pagination.next_num) }}">Next</a>
+    {% endif %}
+  </section>
+
+{% endblock %}

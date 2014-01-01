@@ -1,0 +1,40 @@
+{% extends "main.html" %}
+{% block body %}
+
+{% from "_form_macro.html" import render_form, render_field_with_errors, render_field %}
+<div class="column ten push-one center">
+{# {% for post in users %}
+{{post}}
+{% endfor %}
+#}
+  {% call render_form(action=url_for('login')) %}
+      {{ render_field_with_errors(form.username, class="input-block-level") }}
+      {{ render_field_with_errors(form.password, class="input-block-level", rows="6") }}
+      <input type="submit" value="Submit"> 
+    {% endcall %}
+</div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    function sendRequest(url, data, callback){
+      var JsonObject = {};
+      var http = new XMLHttpRequest();
+      var JsonObject = {
+        'username': document.getElementById('username').value,
+        'password': document.getElementById('password').value
+      }
+      http.open("POST", "/api/auth/", true);
+      http.setRequestHeader("authorization", JsonObject);
+
+      http.onreadystatechange = function () {
+          console.log(http)
+        if (http.readyState == 4 && http.status == 201) {
+            var response = JSON.parse(http.response);
+            document.getElementById("comment").innerHTML = response['message'];
+         }
+      }
+      http.send(JSON.stringify(JsonObject));
+    }
+  </script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "main.html" %}
+{% block body %}
+
+{% from "_form_macro.html" import render_form, render_field_with_errors, render_field %}
+
+<div class="column ten push-one center">
+<form action="/post/" method="post" autocomplete="on">
+	<h3>Create new post</h3>
+	<datalist id="tagList">
+	{% for tag in tags %}
+	    <option value="{{ tag }}">
+	{% endfor %}
+	</datalist>
+
+	{% call render_form(action=url_for('newPost')) %}
+      {{ form.hidden_tag() }}
+      {{ render_field_with_errors(form.title, class="input-block-level") }}
+      {{ render_field_with_errors(form.body, class="input-block-level", rows="6") }}
+      {{ render_field_with_errors(form.tags, class="input-block-level") }}
+      <input name="tags" id="tags" type="hidden"/>
+      <input type="button" value="Add Tag" id="tagButton"> 
+		<p id="tagSelected"></p><br />
+      <div class="btn-group pull-right">
+        <input type="submit" value="Submit" />
+      </div>
+    {% endcall %}
+
+</form>
+</div>
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='js/blog.js') }}"></script>
+{% endblock %}
